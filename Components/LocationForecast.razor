@@ -1,0 +1,48 @@
+@inject HttpClient Http
+
+@if (forecast != null)
+{
+    <section class="location-forecast mt-5" id="LocationForecast">
+    <div class="row">
+        <div class="col-12 col-sm-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="card-body-title text-center">
+                        <h5>@forecast.location.Name, @forecast.location.Region</h5>
+                        <span class="text-secondary">@forecast.location.Country</span>
+                    </div>
+                    <div class="forecast-content">
+                        <div class="temperature-content forecast-content-section text-center mb-2">
+                            <span class="current-temp">@forecast.current.Temp_C</span><small class="deg">°C</small>
+                            <span class="current-temp ms-3">@forecast.current.Temp_F</span><small class="deg">°F</small>
+                        </div>
+                        <div class="forecast-content-section">
+                            <span>@forecast.location.FullDate</span>
+                        </div>
+                        <hr>
+                        <div class="forecast-content-section">
+                            <img class="forecast-icon" src="@forecast.current.condition.Icon" />
+                            <span>@forecast.current.condition.Text</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-9">
+
+        </div>
+    </div>
+</section>
+}
+
+@code {
+    [Parameter] public int LocationId { get; set; }
+    private Forecast forecast;
+
+    protected override async Task OnInitializedAsync()
+    {
+        forecast = await
+        Http.GetFromJsonAsync<Forecast>($"http://api.weatherapi.com/v1/forecast.json?key=21e908cbbed84dbaae3223803240506&q=id:{LocationId}&days=3&aqi=no&alerts=no");
+
+    }
+}

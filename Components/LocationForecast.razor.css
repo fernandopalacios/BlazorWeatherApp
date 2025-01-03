@@ -1,0 +1,25 @@
+
+.forecast-content .temperature-content {
+    display: flex;
+    justify-content: center;
+    font-weight: 250;
+}
+
+.forecast-content .temperature-content .current-temp {
+    font-size: 2.5rem;
+}
+
+.forecast-content .temperature-content .current-temp {
+    align-self: end;
+}
+
+.forecast-content .temperature-content .deg {
+    display: flex;
+    align-items: start;
+    font-size: 1.5rem;
+}
+
+.forecast-content .forecast-icon {
+    width: 45px;
+    height: 45px;
+}

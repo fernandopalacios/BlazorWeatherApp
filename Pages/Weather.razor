@@ -1,57 +1,47 @@
 ﻿@page "/weather"
+@using BlazorWeatherApp.Components
 @inject HttpClient Http
 
 <PageTitle>Weather</PageTitle>
-
-<h1>Weather</h1>
-
-<p>This component demonstrates fetching data from the server.</p>
-
-@if (forecasts == null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th aria-label="Temperature in Celsius">Temp. (C)</th>
-                <th aria-label="Temperature in Farenheit">Temp. (F)</th>
-                <th>Summary</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var forecast in forecasts)
-            {
-                <tr>
-                    <td>@forecast.Date.ToShortDateString()</td>
-                    <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
-                    <td>@forecast.Summary</td>
-                </tr>
+<div class="container">
+    <section class="search-section" id="SearchSection">
+        <input @oninput="searchForLocation" type="text" name="location" id="location" class="search-input"
+            placeholder="Type a location...">
+        <div class="results-container" tabindex="0" @onfocusout="@(() => locations = [])" @ref="resultsContainer">
+            @if(locations != null){
+                @foreach(var location in locations)
+                {
+                    <div class="search-result" @onclick="(()=> {selectedLocationId = location.Id; locations = [];})">
+                        <span class="search-result-span id-span text-secondary">@location.Id</span><span class="search-result-span name-span m-3">@location.Name</span>
+                        <small class="search-result-span text-secondary">@location.Region , @location.Country</small>
+                    </div>
+                }
             }
-        </tbody>
-    </table>
-}
+        </div>
+    </section>
+    @if(selectedLocationId != 0)
+    {
+        <LocationForecast LocationId="@selectedLocationId" />
+    }
+</div>
 
 @code {
-    private WeatherForecast[]? forecasts;
+    ElementReference resultsContainer;
+    private int selectedLocationId = 0;
+    private Location[]? locations;
 
-    protected override async Task OnInitializedAsync()
+    public async Task searchForLocation(ChangeEventArgs e)
     {
-        forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
-    }
+        if (e.Value.ToString().Count() >= 3)
+        {
+            var searchLocation = e.Value.ToString();
+            locations = await
+            Http.GetFromJsonAsync<Location[]>($"http://api.weatherapi.com/v1/search.json?key=21e908cbbed84dbaae3223803240506&q={searchLocation}");
 
-    public class WeatherForecast
-    {
-        public DateOnly Date { get; set; }
-
-        public int TemperatureC { get; set; }
-
-        public string? Summary { get; set; }
-
-        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+        }
+        else
+        {
+            locations = [];
+        }
     }
 }
