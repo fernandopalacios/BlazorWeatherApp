@@ -5,31 +5,36 @@
     <section class="location-forecast mt-5" id="LocationForecast">
     <div class="row">
         <div class="col-12 col-sm-3">
-            <div class="card">
+            <div class="card forecast-card">
                 <div class="card-body">
                     <div class="card-body-title text-center">
-                        <h5>@forecast.location.Name, @forecast.location.Region</h5>
-                        <span class="text-secondary">@forecast.location.Country</span>
+                        <h4>@forecast.Location.Name, @forecast.Location.Region</h4>
+                        <span class="text-secondary">@forecast.Location.Country</span>
                     </div>
                     <div class="forecast-content">
                         <div class="temperature-content forecast-content-section text-center mb-2">
-                            <span class="current-temp">@forecast.current.Temp_C</span><small class="deg">°C</small>
-                            <span class="current-temp ms-3">@forecast.current.Temp_F</span><small class="deg">°F</small>
+                            <span class="current-temp">@forecast.Current.Temp_C</span><small class="deg">°C</small>
+                            <span class="current-temp ms-3">@forecast.Current.Temp_F</span><small class="deg">°F</small>
                         </div>
-                        <div class="forecast-content-section">
-                            <span>@forecast.location.FullDate</span>
+                        <div class="forecast-content-section temperature-content feels-like text-center">
+                            <span>Feels like <b>@forecast.Current.FeelsLike_C°C</b> | <b>@forecast.Current.FeelsLike_F°F</b></span>
                         </div>
                         <hr>
+                        <div class="forecast-content-section mb-1">
+                            <span>@forecast.Location.FullDate</span>
+                        </div>
                         <div class="forecast-content-section">
-                            <img class="forecast-icon" src="@forecast.current.condition.Icon" />
-                            <span>@forecast.current.condition.Text</span>
+                            <img class="forecast-icon" src="@forecast.Current.Condition.Icon" />
+                            <span>@forecast.Current.Condition.Text</span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="col-12 col-sm-9">
+            <WeeklyForecast ForecastDays="@forecast.Forecast.Forecastday" />
 
+            <TodaysHighlights Forecast="@forecast.Current" />
         </div>
     </div>
 </section>
@@ -37,12 +42,10 @@
 
 @code {
     [Parameter] public int LocationId { get; set; }
-    private Forecast forecast;
-
-    protected override async Task OnInitializedAsync()
+    private WeatherForecast forecast;
+    protected override async Task OnParametersSetAsync()
     {
         forecast = await
-        Http.GetFromJsonAsync<Forecast>($"http://api.weatherapi.com/v1/forecast.json?key=21e908cbbed84dbaae3223803240506&q=id:{LocationId}&days=3&aqi=no&alerts=no");
-
+        Http.GetFromJsonAsync<WeatherForecast>($"http://api.weatherapi.com/v1/forecast.json?key=21e908cbbed84dbaae3223803240506&q=id:{LocationId}&days=3&aqi=no&alerts=no");
     }
 }

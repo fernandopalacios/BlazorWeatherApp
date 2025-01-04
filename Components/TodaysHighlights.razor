@@ -1,0 +1,41 @@
+<div class="row mt-3">
+    <h5>Today's Highlights:</h5>
+    <div class="col-12 col-sm-2">
+        <div class="card">
+            <div class="card-body">
+                <small class="text-secondary">Humidity:</small>
+                <h5>@Forecast.Humidity <small class="text-secondary">%</small></h5>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-sm-2">
+        <div class="card">
+            <div class="card-body">
+                <small class="text-secondary">UV Index:</small>
+                <h5>@Forecast.UV</h5>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-sm-2">
+        <div class="card">
+            <div class="card-body">
+                <small class="text-secondary">Wind Speed:</small>
+                <h5>@Forecast.Wind_Kph <small class="text-secondary">kph</small></h5>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-sm-2">
+        <div class="card">
+            <div class="card-body">
+                <small class="text-secondary">Pressure:</small>
+                <h5>@Forecast.Pressure_Mb <small class="text-secondary">mb</small></h5>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@code
+{
+    [Parameter] public Forecast Forecast { get; set; }
+}

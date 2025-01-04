@@ -1,3 +1,6 @@
+.forecast-card {
+    border: none;
+}
 
 .forecast-content .temperature-content {
     display: flex;

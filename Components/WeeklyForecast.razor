@@ -1,0 +1,29 @@
+<div class="row weekly-forecast mt-3">
+    <h5>Forecast for Next Days:</h5>
+    @foreach(WeatherForecastDay forecastDay in ForecastDays)
+    {
+        <div class="col-12 col-md-3">
+            <div class="card">
+                <div class="card-body text-center">
+                    <div class="card-body-section">
+                        <h5>@forecastDay.FullDate</h5>
+                        <img src="@forecastDay.Day.Condition.Icon" class="d-block forecast-icon" alt="">
+                        <br>
+                        <span>@forecastDay.Day.Condition.Text</span>
+                    </div>
+                    <hr>
+                    <div class="card-body-section">
+                        <span class="me-1">@forecastDay.Day.MaxTemp_C°C</span><span
+                            class="text-secondary">@forecastDay.Day.MinTemp_C°C</span> <br>
+                        <span class="me-1">@forecastDay.Day.MaxTemp_F°F</span><span
+                            class="text-secondary">@forecastDay.Day.MinTemp_F°F</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public WeatherForecastDay[] ForecastDays { get; set; }
+}
