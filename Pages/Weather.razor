@@ -4,22 +4,32 @@
 
 <PageTitle>Weather</PageTitle>
 <div class="container">
-    <section class="search-section" id="SearchSection">
-        <input @oninput="searchForLocation" type="text" name="location" id="location" class="search-input"
-            placeholder="Type a location...">
-        <div class="results-container" tabindex="0" @onfocusout="@(() => locations = [])" @ref="resultsContainer">
-            @if(locations != null){
-                @foreach(var location in locations)
-                {
-                    <div class="search-result" @onclick="(()=> {selectedLocationId = location.Id; locations = [];})">
-                        <span class="search-result-span id-span text-secondary">@location.Id</span><span class="search-result-span name-span m-3">@location.Name</span>
-                        <small class="search-result-span text-secondary">@location.Region , @location.Country</small>
-                    </div>
-                }
-            }
+    <div class="row">
+        <div class="col-12 col-md-10 offset-md-1">
+            <div class="mb-2">
+                <b>Search</b> | <NavLink href="favorite-locations">Favorites</NavLink>
+            </div>
+            <section class="search-section" id="SearchSection">
+                <input @oninput="searchForLocation" type="text" name="location" id="location" class="search-input"
+                    placeholder="Type a location...">
+                <div class="results-container" tabindex="0" @onfocusout="@(() => locations = [])"
+                    @ref="resultsContainer">
+                    @if (locations != null)
+                    {
+                        @foreach (var location in locations)
+                        {
+                            <div class="search-result" @onclick="(()=> {selectedLocationId = location.Id; locations = [];})">
+                                <span class="search-result-span id-span text-secondary">@location.Id</span><span
+                                    class="search-result-span name-span m-3">@location.Name</span>
+                                <small class="search-result-span text-secondary">@location.Region , @location.Country</small>
+                            </div>
+                        }
+                    }
+                </div>
+            </section>
         </div>
-    </section>
-    @if(selectedLocationId != 0)
+    </div>
+    @if (selectedLocationId != 0)
     {
         <LocationForecast LocationId="@selectedLocationId" />
     }

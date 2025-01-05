@@ -27,7 +27,6 @@ public class WeatherForecastDay
     }
 
 }
-
 public class Day
 {
     public double MaxTemp_C {get;set;}

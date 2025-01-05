@@ -1,0 +1,71 @@
+@page "/favorite-locations"
+@inject HttpClient Http
+
+<div class="container">
+    <div class="row">
+        <div class="col-12 col-md-9 offset-md-1">
+            <div class="mb-2">
+                <NavLink href="weather">Search</NavLink> | <b>Favorites</b>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-md-9 offset-md-1">
+            <h5>Saved Locations</h5>
+            @if(loading)
+            {
+                <div class="loading">
+                    Loading...
+                </div>
+            }
+            else
+            {
+                @if(forecasts.Count() > 0)
+                {
+                    @foreach (WeatherForecast forecast in forecasts)
+                    {
+                        <div class="card mb-3">
+                            <div class="card-body location-card d-flex align-items-center justify-content-between py-1">
+                                <h6 class="m-0">@forecast.Location.Name<small class="text-secondary ms-2">@forecast.Location.Region, @forecast.Location.Country </small></h6>
+                                <div class="temperature">
+                                    <span class="temperature">@forecast.Current.Temp_C °C </span>
+                                    <span class="text-secondary temperature"> | @forecast.Current.Temp_F °F </span>
+                                </div>
+                                <img class="weather-icon" src="@forecast.Current.Condition.Icon" alt="">
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                <div class="no-records">
+                    You don't have locations saved
+                </div>
+                }
+            }
+        </div>
+    </div>
+</div>
+
+@code
+{
+    bool loading = true;
+    FavoriteLocation[]? locations = [];
+    List<WeatherForecast> forecasts = new List<WeatherForecast>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        locations = await
+        Http.GetFromJsonAsync<FavoriteLocation[]>($"http://localhost:5073/api/locations/1");
+
+        foreach (FavoriteLocation location in locations)
+        {
+            var locationForecast = await
+            Http.GetFromJsonAsync<WeatherForecast>($"http://api.weatherapi.com/v1/current.json?key=21e908cbbed84dbaae3223803240506&q=id:{location.CityId}&aqi=no");
+                
+            forecasts.Add(locationForecast);
+        }
+
+        loading = false;
+    }
+}

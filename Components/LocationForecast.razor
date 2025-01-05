@@ -4,9 +4,9 @@
 {
     <section class="location-forecast mt-5" id="LocationForecast">
     <div class="row">
-        <div class="col-12 col-sm-3">
+        <div class="col-12 col-md-3 offset-md-1">
             <div class="card forecast-card">
-                <div class="card-body">
+                <div class="card-body ps-md-0">
                     <div class="card-body-title text-center">
                         <h4>@forecast.Location.Name, @forecast.Location.Region</h4>
                         <span class="text-secondary">@forecast.Location.Country</span>
@@ -31,7 +31,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-12 col-sm-9">
+        <div class="col-12 col-md-7">
             <WeeklyForecast ForecastDays="@forecast.Forecast.Forecastday" />
 
             <TodaysHighlights Forecast="@forecast.Current" />
