@@ -1,4 +1,7 @@
+@using System.Text.Json
+@using System.Text
 @inject HttpClient Http
+@inject IJSRuntime JSRuntime
 
 @if (forecast != null)
 {
@@ -23,9 +26,14 @@
                         <div class="forecast-content-section mb-1">
                             <span>@forecast.Location.FullDate</span>
                         </div>
-                        <div class="forecast-content-section">
+                        <div class="forecast-content-section mb-1">
                             <img class="forecast-icon" src="@forecast.Current.Condition.Icon" />
                             <span>@forecast.Current.Condition.Text</span>
+                        </div>
+                        <div class="forecast-content-section text-end">
+                            <button class="icon-container btn btn-warning btn-sm" @onclick="ToggleFavoriteLocation">
+                                <i class="bi bi-star-fill"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -43,9 +51,27 @@
 @code {
     [Parameter] public int LocationId { get; set; }
     private WeatherForecast forecast;
+    bool isFavorite = false;
     protected override async Task OnParametersSetAsync()
     {
         forecast = await
         Http.GetFromJsonAsync<WeatherForecast>($"http://api.weatherapi.com/v1/forecast.json?key=21e908cbbed84dbaae3223803240506&q=id:{LocationId}&days=3&aqi=no&alerts=no");
+    }
+
+    protected async void ToggleFavoriteLocation()
+    {
+        {
+            string userId = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "userId");
+            object payload = new
+            {
+                CityId = LocationId,
+                UserId = userId
+            };
+            if (!isFavorite)
+            {
+                await Http.PostAsJsonAsync("http://localhost:5073/api/locations", payload);
+                isFavorite = true;
+            }
+        }
     }
 }

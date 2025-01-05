@@ -5,6 +5,7 @@ public class Location
     public string Region { get; set; }
     public string Country { get; set; }
     public string Localtime { get; set; }
+    public int FavoriteLocationId { get; set; }
     public string FullDate
     {
         get

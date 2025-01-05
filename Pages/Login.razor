@@ -1,0 +1,73 @@
+@page "/login"
+@layout GuestLayout
+@inject HttpClient Http
+@inject IJSRuntime JSRuntime
+@inject NavigationManager Navigation
+
+<div class="container row py-5">
+    <div class="col-12 col-md-4 offset-md-4">
+        <div class="card login-card">
+            <div class="card-body">
+                <form onsubmit="@SubmitLoginForm">
+                    <h4 class="mb-4">Login</h4>
+                    <div class="form-group mb-4">
+                        <input type="text" autocomplete="off" class="form-control" id="username" name="username"
+                            placeholder="Username" @bind-value="username" />
+                    </div>
+                    <div class="form-group mb-4">
+                        <input type="password" autocomplete="off" class="form-control" id="pin" name="pin"
+                            placeholder="PIN" @bind-value="pin" />
+                    </div>
+                    <div class="form-group mb-3">
+                        <button class="btn btn-info">Enter</button>
+                    </div>
+                    @if(showError)
+                    {
+                    <div class="form-group">
+                        <span class="error-message text-danger">Wrong username or password. Please, try again.</span>
+                    </div>
+                    }
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+@code
+{
+    string username = "";
+    string pin = "";
+    bool showError = false;
+    public async void SubmitLoginForm()
+    {
+        if (username != "" && pin != "")
+        {
+            var login = new User { Username = username, PIN = Int32.Parse(pin) };
+            var response = await
+            Http.PostAsJsonAsync<User>($"http://localhost:5073/api/users/login", login);
+
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                showError = false;
+                var data = response.Content.ReadFromJsonAsync<User>().Result;
+                await JSRuntime.InvokeVoidAsync("localStorage.setItem", "username", data.Username);
+                await JSRuntime.InvokeVoidAsync("localStorage.setItem", "userId", data.Id);
+                Navigation.NavigateTo("/weather");
+
+            }
+            else
+            {
+                showError = true;
+            }
+        }
+    }
+
+    public class User
+    {
+        public int Id { get; set; }
+        public string Username { get; set; }
+        public int PIN { get; set; }
+    }
+}

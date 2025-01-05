@@ -1,4 +1,7 @@
-﻿<Router AppAssembly="@typeof(App).Assembly">
+﻿@inject IJSRuntime JSRuntime
+@inject NavigationManager Navigation
+@using BlazorWeatherApp.Pages
+<Router AppAssembly="@typeof(Program).Assembly">
     <Found Context="routeData">
         <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
         <FocusOnNavigate RouteData="@routeData" Selector="h1" />
@@ -10,3 +13,26 @@
         </LayoutView>
     </NotFound>
 </Router>
+
+@code
+{
+    string userId;
+    protected override async Task OnInitializedAsync()
+    {
+        object data = new
+        {
+            key = "userId"
+        };
+        userId = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "userId");
+
+        if(userId == null)
+        {
+            Navigation.NavigateTo("/login");
+        }
+        else
+        {
+            Navigation.NavigateTo("/weather");
+        }
+    }
+
+}

@@ -1,4 +1,7 @@
 ﻿@inherits LayoutComponentBase
+@inject IJSRuntime JSRuntime
+@inject NavigationManager Navigation
+
 <div class="page">
     <div class="sidebar">
         <NavMenu />
@@ -6,7 +9,7 @@
 
     <main>
         <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+            <a href="/login" @onclick="LogOut">Logout</a>
         </div>
 
         <article class="content px-4">
@@ -14,3 +17,13 @@
         </article>
     </main>
 </div>
+
+@code
+{
+    private async void LogOut(MouseEventArgs e)
+    {
+        await JSRuntime.InvokeVoidAsync("localStorage.removeItem", "username");
+        await JSRuntime.InvokeVoidAsync("localStorage.removeItem", "userId");
+        Navigation.NavigateTo("/login");
+    }
+}
