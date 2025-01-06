@@ -2,6 +2,7 @@
 @using BlazorWeatherApp.Components.FavoriteLocation
 @inject HttpClient Http
 @inject IJSRuntime JSRuntime
+@inject RootSettings Settings
 
 <div class="container">
     <div class="row">
@@ -65,12 +66,12 @@
     {
         forecasts = [];
         locations = await
-        Http.GetFromJsonAsync<FavoriteLocation[]>($"http://localhost:5073/api/locations/{userId}");
+        Http.GetFromJsonAsync<FavoriteLocation[]>($"{Settings.AppSettings.LocalApiUrl}/locations/{userId}");
 
         foreach (FavoriteLocation location in locations)
         {
             var locationForecast = await
-            Http.GetFromJsonAsync<WeatherForecast>($"http://api.weatherapi.com/v1/current.json?key=21e908cbbed84dbaae3223803240506&q=id:{location.CityId}&aqi=no");
+            Http.GetFromJsonAsync<WeatherForecast>($"{Settings.AppSettings.WeatherForecastApiUrl}?key={Settings.AppSettings.WeatherApiKey}&q=id:{location.CityId}&aqi=no");
 
             locationForecast.Location.FavoriteLocationId = location.Id;
             forecasts.Add(locationForecast);

@@ -2,6 +2,7 @@
 @using System.Text
 @inject HttpClient Http
 @inject IJSRuntime JSRuntime
+@inject RootSettings Settings
 
 @if (forecast != null)
 {
@@ -64,7 +65,7 @@
     protected override async Task OnParametersSetAsync()
     {
         forecast = await
-        Http.GetFromJsonAsync<WeatherForecast>($"http://api.weatherapi.com/v1/forecast.json?key=21e908cbbed84dbaae3223803240506&q=id:{LocationId}&days=3&aqi=no&alerts=no");
+        Http.GetFromJsonAsync<WeatherForecast>($"{Settings.AppSettings.WeatherForecastApiUrl}?key={Settings.AppSettings.WeatherApiKey}&q=id:{LocationId}&days=3&aqi=no&alerts=no");
     }
 
     protected async void ToggleFavoriteLocation()
@@ -76,7 +77,7 @@
             CityId = LocationId,
             UserId = userId
         };
-        await Http.PostAsJsonAsync("http://localhost:5073/api/locations", payload);
+        await Http.PostAsJsonAsync($"{Settings.AppSettings.LocalApiUrl}/locations", payload);
         await ShowMessage();
     }
     

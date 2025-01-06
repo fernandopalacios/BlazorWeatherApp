@@ -1,9 +1,11 @@
 ﻿@page "/weather"
-
 @using BlazorWeatherApp.Components.LocationForecast
 @inject HttpClient Http
+@inject RootSettings Settings
 
 <PageTitle>Weather</PageTitle>
+@if(Settings != null)
+{
 <div class="container">
     <div class="row">
         <div class="col-12 col-md-10 offset-md-1">
@@ -32,9 +34,16 @@
     </div>
     @if (selectedLocationId != 0)
     {
-        <LocationForecast LocationId="@selectedLocationId" />
+        <LocationForecast LocationId="selectedLocationId" />
     }
 </div>
+}
+else
+{
+    <div class="container">
+        Loading settings
+    </div>
+}
 
 @code {
     ElementReference resultsContainer;
@@ -47,7 +56,7 @@
         {
             var searchLocation = e.Value.ToString();
             locations = await
-            Http.GetFromJsonAsync<Location[]>($"http://api.weatherapi.com/v1/search.json?key=21e908cbbed84dbaae3223803240506&q={searchLocation}");
+            Http.GetFromJsonAsync<Location[]>($"{Settings.AppSettings.WeatherSearchApiUrl}?key={Settings.AppSettings.WeatherApiKey}&q={searchLocation}");
 
         }
         else

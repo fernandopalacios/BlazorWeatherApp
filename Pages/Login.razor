@@ -3,6 +3,7 @@
 @inject HttpClient Http
 @inject IJSRuntime JSRuntime
 @inject NavigationManager Navigation
+@inject RootSettings Settings
 
 <div class="container row py-5">
     <div class="col-12 col-md-4 offset-md-4">
@@ -46,7 +47,7 @@
         {
             var login = new User { Username = username, PIN = Int32.Parse(pin) };
             var response = await
-            Http.PostAsJsonAsync<User>($"http://localhost:5073/api/users/login", login);
+            Http.PostAsJsonAsync<User>($"{Settings.AppSettings.LocalApiUrl}/users/login", login);
 
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {

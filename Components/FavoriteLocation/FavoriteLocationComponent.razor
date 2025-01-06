@@ -1,4 +1,5 @@
 @inject HttpClient Http
+@inject RootSettings Settings
 
 @if(forecast != null)
 {
@@ -24,7 +25,7 @@
     {
         if (locationId != 0)
         {
-            await Http.DeleteAsync($"http://localhost:5073/api/locations/{locationId}");
+            await Http.DeleteAsync($"{Settings.AppSettings.LocalApiUrl}/locations/{locationId}");
             await OnDeleteButtonClick.InvokeAsync("Deleted");
         }
     }
