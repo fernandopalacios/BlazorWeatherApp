@@ -1,7 +1,7 @@
 public class WeatherForecast
 {
     public Location Location { get; set; }
-    public Forecast Current { get; set; }
+    public Current Current { get; set; }
     public ForecastDay Forecast { get; set; }
 
 }
@@ -21,8 +21,7 @@ public class WeatherForecastDay
         get
         {
             DateTime dateTime = DateTime.Parse(Date);
-            string fullDate = dateTime.ToString("MMM d");
-            return fullDate;
+            return dateTime.ToString("MMM d");
         }
     }
 

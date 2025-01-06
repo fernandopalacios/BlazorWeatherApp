@@ -11,8 +11,7 @@ public class Location
         get
         {
             DateTime dateTime = DateTime.Parse(Localtime);
-            string fullDate = dateTime.ToString("dddd d, HH:mm");
-            return fullDate;
+            return dateTime.ToString("dddd d, HH:mm");
         }
     }
 }

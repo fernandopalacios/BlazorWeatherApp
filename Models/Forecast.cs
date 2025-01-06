@@ -1,4 +1,4 @@
-public class Forecast
+public class Current
 {
     public double Temp_C { get; set; }
     public double Temp_F { get; set; }
