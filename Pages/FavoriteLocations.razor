@@ -1,4 +1,5 @@
 @page "/favorite-locations"
+@using BlazorWeatherApp.Components.FavoriteLocation
 @inject HttpClient Http
 @inject IJSRuntime JSRuntime
 
@@ -13,6 +14,12 @@
     <div class="row">
         <div class="col-12 col-md-9 offset-md-1">
             <h5>Saved Locations</h5>
+            @if (showMessage)
+            {
+                <div class="alert alert-success py-2" role="alert">
+                    The Location was deleted successfully
+                </div>
+            }
             @if (loading)
             {
                 <div class="loading">
@@ -25,19 +32,7 @@
                 {
                     @foreach (WeatherForecast forecast in forecasts)
                     {
-                        <div class="card mb-3">
-                            <div class="card-body location-card d-flex align-items-center justify-content-between py-1">
-                                <h6 class="m-0">@forecast.Location.Name<small class="text-secondary ms-2">@forecast.Location.Region,
-                                        @forecast.Location.Country </small></h6>
-                                <div class="temperature">
-                                    <span class="temperature">@forecast.Current.Temp_C °C </span>
-                                    <span class="text-secondary temperature"> | @forecast.Current.Temp_F °F </span>
-                                </div>
-                                <img class="weather-icon" src="@forecast.Current.Condition.Icon" alt="">
-                                <i class="bi bi-x-circle delete-button"
-                                    @onclick="() => DeleteLocation(forecast.Location.FavoriteLocationId)"></i>
-                            </div>
-                        </div>
+                        <FavoriteLocationComponent forecast="forecast" OnDeleteButtonClick="HandleDeleteEvent" />
                     }
                 }
                 else
@@ -55,6 +50,7 @@
 {
     int userId;
     bool loading = true;
+    private bool showMessage = false;
     FavoriteLocation[]? locations = [];
     List<WeatherForecast> forecasts = new List<WeatherForecast>();
 
@@ -83,14 +79,21 @@
         loading = false;
     }
 
-    protected async Task DeleteLocation(int locationId)
+    private async Task HandleDeleteEvent()
     {
-        if (locationId != 0)
-        {
-            await Http.DeleteAsync($"http://localhost:5073/api/locations/{locationId}");
+        await FetchLocations();
+        await ShowMessage();
+    }
 
-            await FetchLocations();
-        }
+    private async Task ShowMessage()
+    {
+        showMessage = true;
+        StateHasChanged();
+
+        await Task.Delay(3000);
+        showMessage = false;
+
+        StateHasChanged();
     }
 
 }

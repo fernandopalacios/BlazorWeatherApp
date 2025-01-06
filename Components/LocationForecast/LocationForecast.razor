@@ -9,7 +9,7 @@
     <div class="row">
         <div class="col-12 col-md-3 offset-md-1">
             <div class="card forecast-card">
-                <div class="card-body ps-md-0">
+                <div class="card-body px-md-0">
                     <div class="card-body-title text-center">
                         <h4>@forecast.Location.Name, @forecast.Location.Region</h4>
                         <span class="text-secondary">@forecast.Location.Country</span>
@@ -20,7 +20,8 @@
                             <span class="current-temp ms-3">@forecast.Current.Temp_F</span><small class="deg">°F</small>
                         </div>
                         <div class="forecast-content-section temperature-content feels-like text-center">
-                            <span>Feels like <b>@forecast.Current.FeelsLike_C°C</b> | <b>@forecast.Current.FeelsLike_F°F</b></span>
+                            <span>Feels like <b>@forecast.Current.FeelsLike_C°C</b> |
+                                <b>@forecast.Current.FeelsLike_F°F</b></span>
                         </div>
                         <hr>
                         <div class="forecast-content-section mb-1">
@@ -30,28 +31,36 @@
                             <img class="forecast-icon" src="@forecast.Current.Condition.Icon" />
                             <span>@forecast.Current.Condition.Text</span>
                         </div>
-                        <div class="forecast-content-section text-end">
-                            <button class="icon-container btn btn-warning btn-sm" @onclick="ToggleFavoriteLocation">
+                        <div class="forecast-content-section">
+                            <button class="icon-container btn btn-warning self-align-end px-1 py-0 me-2"
+                                @onclick="ToggleFavoriteLocation">
                                 <i class="bi bi-star-fill"></i>
                             </button>
+                            @if (showMessage)
+                                {
+                                    <div class="alert alert-success py-1 px-1 me-1" role="alert">
+                                        Location successfully saved!
+                                    </div>
+                                }
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="col-12 col-md-7">
-            <WeeklyForecast ForecastDays="@forecast.Forecast.Forecastday" />
+            <div class="col-12 col-md-7">
+                <WeeklyForecast ForecastDays="@forecast.Forecast.Forecastday" />
 
-            <TodaysHighlights Forecast="@forecast.Current" />
+                <TodaysHighlights Forecast="@forecast.Current" />
+            </div>
         </div>
-    </div>
-</section>
+    </section>
 }
 
 @code {
     [Parameter] public int LocationId { get; set; }
     private WeatherForecast forecast;
-    bool isFavorite = false;
+    private bool showMessage = false;
+
     protected override async Task OnParametersSetAsync()
     {
         forecast = await
@@ -60,18 +69,25 @@
 
     protected async void ToggleFavoriteLocation()
     {
+
+        string userId = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "userId");
+        object payload = new
         {
-            string userId = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "userId");
-            object payload = new
-            {
-                CityId = LocationId,
-                UserId = userId
-            };
-            if (!isFavorite)
-            {
-                await Http.PostAsJsonAsync("http://localhost:5073/api/locations", payload);
-                isFavorite = true;
-            }
-        }
+            CityId = LocationId,
+            UserId = userId
+        };
+        await Http.PostAsJsonAsync("http://localhost:5073/api/locations", payload);
+        await ShowMessage();
+    }
+    
+    private async Task ShowMessage()
+    {
+        showMessage = true;
+        StateHasChanged();
+
+        await Task.Delay(3000); 
+        showMessage = false;
+
+        StateHasChanged();
     }
 }

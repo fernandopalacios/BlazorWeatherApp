@@ -1,5 +1,6 @@
 ﻿@page "/weather"
-@using BlazorWeatherApp.Components
+
+@using BlazorWeatherApp.Components.LocationForecast
 @inject HttpClient Http
 
 <PageTitle>Weather</PageTitle>
@@ -11,7 +12,7 @@
             </div>
             <section class="search-section" id="SearchSection">
                 <input @oninput="searchForLocation" type="text" name="location" id="location" class="search-input"
-                    placeholder="Type a location...">
+                    placeholder="Type a location..." autocomplete="off">
                 <div class="results-container" tabindex="0" @onfocusout="@(() => locations = [])"
                     @ref="resultsContainer">
                     @if (locations != null)
